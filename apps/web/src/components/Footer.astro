@@ -1,0 +1,62 @@
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer-container">
+    <p class="copyright">
+      &copy; {currentYear} Colors Project. Built with <span class="heart"
+        >❤️</span
+      > by <a href="https://github.com/moonhou" target="_blank" rel="noopener"
+        >MoonHou</a
+      >.
+    </p>
+    <div class="footer-links">
+      <a
+        href="https://github.com/moonhou/colors/blob/main/LICENSE"
+        target="_blank">MIT License</a
+      >
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    padding: 32px 0;
+    margin-top: auto; /* Push to bottom if flex container */
+    border-top: 1px solid var(--sys-border-divider);
+    background: var(--sys-bg-canvas);
+    color: var(--sys-text-secondary);
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  .footer-links a {
+    color: var(--sys-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover {
+    color: var(--sys-text-primary);
+  }
+
+  .copyright a {
+    color: var(--sys-text-primary);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .heart {
+    display: inline-block;
+    color: var(--sys-error-text);
+  }
+</style>

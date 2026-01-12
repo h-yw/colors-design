@@ -1,0 +1,97 @@
+---
+import GlobalThemeManager from '../components/GlobalThemeManager';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  type?: 'landing' | 'default';
+}
+
+const { title, type = 'default' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-layout={type}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script is:inline>
+      // Anti-flicker script: Read storage and apply theme before React hydrates
+      try {
+        const storage = localStorage.getItem('bg-theme-storage');
+        if (storage) {
+          const { state } = JSON.parse(storage);
+          if (state && state.mode === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.documentElement.style.colorScheme = 'dark';
+            // Pre-set critical CSS variables to dark mode defaults to prevent white flash
+            document.documentElement.style.setProperty(
+              '--sys-bg-canvas',
+              '#141414'
+            );
+            document.documentElement.style.setProperty(
+              '--sys-text-primary',
+              '#ffffff'
+            );
+          }
+        }
+      } catch (e) {
+        console.error('Failed to restore theme', e);
+      }
+    </script>
+  </head>
+  <body>
+    <GlobalThemeManager client:only="react" />
+
+    <Navbar />
+
+    {
+      type === 'default' ? (
+        <div class="layout-wrapper">
+          <main class="main-content">
+            <slot />
+          </main>
+          <Footer />
+        </div>
+      ) : (
+        <slot />
+      )
+    }
+  </body>
+</html>
+
+<style is:global>
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    /* Default height needed for full screen layouts */
+    height: 100%;
+    font-family:
+      'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+
+    /* Global Theme Application */
+    background-color: var(--sys-bg-canvas);
+    color: var(--sys-text-primary);
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  /* Default layout specific styles */
+  .layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .main-content {
+    flex: 1;
+    padding-top: 64px; /* Space for Navbar */
+    width: 100%;
+  }
+</style>

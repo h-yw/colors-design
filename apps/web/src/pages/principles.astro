@@ -1,0 +1,567 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { TraditionalColorSystem } from '@moonhou/colors-core';
+import colorData from '../lib/colors.json';
+import { PrimitiveCharts } from '../components/PrimitiveCharts';
+import { ThemeVerifier } from '../components/theme-verifier/index';
+
+// Generate a sample for visualization (still needed for content visuals like PrimitiveCharts, but NOT for page theme)
+const system = new TraditionalColorSystem(colorData);
+// Use "Tian Qing" (Sky Blue) as the primary example as it has interesting gamut challenges
+const sampleColor = colorData.find((c) => c.name === '天青') || colorData[0];
+const samplePalette = system.generatePalette(sampleColor.name);
+---
+
+<Layout title="色彩生成原理 - Colors">
+  <div class="principles-page">
+    <header class="hero-section">
+      <div class="container">
+        <h1>色彩生成的数学原理</h1>
+        <p class="subtitle">
+          从一个 HEX 代码到完整的无障碍设计系统。<br />
+          本文将详述 Colors 背后的算法逻辑，助你理解或复刻这套系统。
+        </p>
+      </div>
+    </header>
+
+    <main class="content-container">
+      <!-- TOC -->
+      <nav class="toc">
+        <ul>
+          <li><a href="#oklch">1. OKLCH 色彩空间</a></li>
+          <li><a href="#algorithm">2. 色阶生成算法</a></li>
+          <li><a href="#apca">3. APCA 无障碍标准</a></li>
+          <li><a href="#harmonies">4. 色彩和声</a></li>
+          <li><a href="#tokens">5. 3层 Token 架构</a></li>
+        </ul>
+      </nav>
+
+      <!-- Chapter 1: Color Space -->
+      <section id="oklch" class="chapter">
+        <h2>1. 核心基石：OKLCH 色彩空间</h2>
+        <div class="prose">
+          <p>
+            传统的 HSL (Hue, Saturation, Lightness) 模型在物理感知上存在缺陷：
+            <strong class="highlight"
+              >不同色相的“相同亮度”在人眼中看起来明暗差异巨大。</strong
+            >
+            例如，亮度均为 50% 的黄色看起来比蓝色亮得多。这导致无法仅仅通过数学计算来实现自动化的无障碍对比度。
+          </p>
+          <p>
+            Colors 采用了现代的 <strong>OKLCH</strong> 色彩空间（感知均匀色彩空间）作为计算核心：
+          </p>
+          <ul class="feature-list">
+            <li>
+              <strong>L (Lightness):</strong> 感知亮度。L=50 的任何颜色在人眼中具有一致的灰度感知。这是实现“一键暗黑模式”和自动化对比度检查的物理基础。
+            </li>
+            <li>
+              <strong>C (Chroma):</strong> 色度（饱和度）。描述色彩的纯度。
+            </li>
+            <li><strong>H (Hue):</strong> 色相。0-360度的色环。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Chapter 2: Algorithm -->
+      <section id="algorithm" class="chapter">
+        <h2>2. 生成管线：智能色阶算法</h2>
+        <div class="prose">
+          <p>
+            生成色板 (Tonal Palette)
+            并非简单的调整透明度或混合白色。我们需要生成从 0 (黑) 到 100 (白)
+            的连续色阶，同时保持色相的稳定性。
+          </p>
+          <h3>Chroma Reduction (色度衰减)</h3>
+          <p>
+            这是色彩生成中最具挑战的部分。许多高饱和度颜色（如明亮的青色、紫色）在
+            sRGB 屏幕上无法正确显示（超出色域）。 如果简单地截断数值
+            (Clipping)，会导致严重的色相偏移（例如蓝色变成紫色）。
+          </p>
+          <p>
+            我们引入了 <strong
+              >二分搜索色域映射 (Binary Search Gamut Mapping)</strong
+            > 算法：
+          </p>
+          <ol>
+            <li>锁定目标 Lightness (L) 和 Hue (H)。</li>
+            <li>
+              在 OKLCH 空间中，利用二分查找寻找该亮度下 sRGB 能容纳的最大 Chroma
+              (C)。
+            </li>
+            <li>
+              确保所有生成的颜色均在 sRGB/P3
+              安全色域内，同时尽可能保留原本的鲜艳度。
+            </li>
+          </ol>
+
+          <div class="viz-box">
+            <h3>可视化结果 (以"{sampleColor.name}"为例)</h3>
+            <p>
+              观察下表，尽管亮度是线性变化的，但色度 (Chroma)
+              会呈现出独特的曲线。这是为了在极亮和极暗区域保证颜色不失真而做的自适应调整。
+            </p>
+            <PrimitiveCharts
+              primitives={{
+                [sampleColor.name]: samplePalette.primitives.brand,
+              } as any}
+              client:idle
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Chapter 3: APCA -->
+      <section id="apca" class="chapter">
+        <h2>3. 视觉科学：APCA 感知对比度</h2>
+        <div class="prose">
+          <div class="info-card">
+            <h4>为什么不再使用 WCAG 2.1?</h4>
+            <p>
+              基于比率的算法 (如 4.5:1)
+              在暗色模式下并不准确。它倾向于强制使用极高亮度的白色文本，这在深色背景上会导致刺眼的“光晕效应”
+              (Halation)，增加视觉疲劳。
+            </p>
+          </div>
+          <p>
+            本项目引入了 <strong
+              >APCA (Advanced Perceptual Contrast Algorithm)</strong
+            > —— WCAG 3.0 的核心候选标准。 它基于由 Lightness Contrast (Lc) 衡量的感知对比度，更符合人眼对文字阅读的真实需求。
+          </p>
+          <div class="viz-box">
+            <h3>APCA Lc 评分准则</h3>
+            <ul class="score-list">
+              <li>
+                <span class="score-badge preferred">Lc 90+</span>
+                <div>
+                  <strong>Preferred (卓越)</strong>
+                  <p>
+                    适合正文 (Body Text)，阅读体验极佳。Colors
+                    确保主要文本在浅色/深色模式下均达到此标准。
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span class="score-badge good">Lc 75+</span>
+                <div>
+                  <strong>Good (良好)</strong>
+                  <p>
+                    适合大多数阅读场景，也是 Apple/Google 设计规范中的推荐值。
+                  </p>
+                </div>
+              </li>
+              <li>
+                <span class="score-badge content">Lc 60+</span>
+                <div>
+                  <strong>Content (内容)</strong>
+                  <p>适合次要文本或加粗的大标题。</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Chapter 4: Harmonies -->
+      <section id="harmonies" class="chapter">
+        <h2>4. 色彩和声：几何美学</h2>
+        <div class="prose">
+          <p>
+            在 OKLCH 环形色空间中，“配色”变成了精确的几何旋转。
+            我们通过旋转色相环 (Hue Rotation) 来寻找天然和谐的搭配色彩。
+          </p>
+          <div class="code-block">
+            <pre><code><span class="comment">// 核心逻辑：基于角度旋转生成和声</span>
+const shift = (h, deg) => (h + deg) % 360;
+
+return &#123;
+  <span class="keyword">complementary</span>: fitToGamut(&#123; ...source, h: shift(source.h, 180) &#125;), <span class="comment">// 互补色</span>
+  <span class="keyword">analogous</span>: [
+    fitToGamut(&#123; ...source, h: shift(source.h, -30) &#125;), <span class="comment">// 邻近色</span>
+    fitToGamut(&#123; ...source, h: shift(source.h, +30) &#125;)
+  ]
+&#125;;</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section id="tokens" class="chapter">
+        <h2>5. 架构设计：3层 Token 系统</h2>
+        <div class="prose">
+          <p>
+            为了实现可扩展的设计系统，我们将色彩解耦为三个层级：<strong
+              >Primitives (基础)</strong
+            >、<strong>Semantics (语义)</strong> 和 <strong
+              >Component (组件)</strong
+            >。
+          </p>
+
+          <h3>Layer 1: Primitives (基础变量)</h3>
+          <p>
+            这是设计系统的原子。包含所有色相的 13 级色阶 (0-100)。<br
+            />例如：<code>brand-40</code>, <code>neutral-90</code>。
+          </p>
+
+          <h3>Layer 2: Semantics (语义变量)</h3>
+          <p>描述颜色的用途，而非颜色本身。这是支持自动暗色模式的关键。</p>
+
+          <div class="table-wrapper">
+            <table class="logic-table">
+              <thead>
+                <tr>
+                  <th style="width: 30%">语义 Token</th>
+                  <th style="width: 20%">Light 映射</th>
+                  <th style="width: 20%">Dark 映射</th>
+                  <th>设计意图</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>brand.primary</code></td>
+                  <td><span class="token-tag light">Brand-40</span></td>
+                  <td><span class="token-tag dark">Brand-80</span></td>
+                  <td>
+                    主色。浅色模式下使用深色以保证对比度；深色模式下使用浅色以发光。
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>bg.canvas</code></td>
+                  <td><span class="token-tag light">Neutral-98</span></td>
+                  <td><span class="token-tag dark">Neutral-0</span></td>
+                  <td>
+                    应用底色。浅色略带纸张质感，深色为纯黑以节省 OLED 电量。
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>text.primary</code></td>
+                  <td><span class="token-tag light">Neutral-10</span></td>
+                  <td><span class="token-tag dark">Neutral-95</span></td>
+                  <td> 主要文本。避免纯黑/纯白，降低长阅读的视觉压力。 </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3>Layer 3: HarmonyOS / Native 映射</h3>
+          <p>
+            我们提供了专用的 <code>HarmonyMapper</code>，将上述语义 Token 1:1
+            投射到 OpenHarmony/HarmonyOS 的 `ohos_id_color_*` 资源键值中，
+            确保生成的应用在鸿蒙原生系统中具有原生的视觉体验。
+          </p>
+        </div>
+      </section>
+
+      <footer class="footer-section">
+        <p>Built with ❤️ by the DevTools Team.</p>
+        <div style="margin-top: 1rem;">
+          <a href="/" class="btn-primary">Return to Generator</a>
+        </div>
+      </footer>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  :root {
+    --toc-width: 240px;
+    --content-max-width: 800px;
+  }
+
+  .principles-page {
+    background: var(--sys-bg-canvas);
+    color: var(--sys-text-primary);
+    min-height: 100vh;
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+      sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    line-height: 1.75;
+  }
+
+  .container {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  .content-container {
+    max-width: var(--content-max-width);
+    margin: 0 auto;
+    padding: 60px 24px 120px;
+    position: relative;
+  }
+
+  /* TOC (Desktop Only) */
+  .toc {
+    display: none;
+    position: fixed;
+    top: 120px;
+    left: calc(50% - var(--content-max-width) / 2 - var(--toc-width) - 40px);
+    width: var(--toc-width);
+  }
+
+  @media (min-width: 1200px) {
+    .toc {
+      display: block;
+    }
+  }
+
+  .toc ul {
+    list-style: none;
+    padding: 0;
+    border-left: 1px solid var(--sys-border-divider);
+  }
+
+  .toc li {
+    margin-bottom: 12px;
+  }
+
+  .toc a {
+    display: block;
+    padding-left: 20px;
+    color: var(--sys-text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+
+  .toc a:hover {
+    color: var(--sys-brand-primary);
+  }
+
+  .hero-section {
+    background: var(--sys-bg-tint-brand);
+    padding: 100px 0 80px;
+    border-bottom: 1px solid var(--sys-border-divider);
+  }
+
+  .hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    color: var(--sys-text-primary);
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    font-size: 1.4rem;
+    color: var(--sys-text-secondary);
+    max-width: 640px;
+    font-weight: 400;
+  }
+
+  .chapter {
+    margin-bottom: 100px;
+    scroll-margin-top: 100px; /* For anchor scrolling */
+  }
+
+  .chapter h2 {
+    font-size: 2.2rem;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--sys-border-divider);
+    color: var(--sys-text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .chapter h3 {
+    font-size: 1.6rem;
+    margin-top: 48px;
+    margin-bottom: 24px;
+    color: var(--sys-text-primary);
+    font-weight: 600;
+  }
+
+  .prose p {
+    margin-bottom: 1.8rem;
+    font-size: 1.125rem;
+    color: var(--sys-text-secondary);
+    text-align: justify;
+  }
+
+  .highlight {
+    color: var(--sys-brand-primary);
+    font-weight: 600;
+  }
+
+  .feature-list,
+  .score-list {
+    padding: 0;
+    list-style: none;
+  }
+
+  .feature-list li {
+    margin-bottom: 1rem;
+    padding-left: 24px;
+    position: relative;
+    color: var(--sys-text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .feature-list li::before {
+    content: '•';
+    color: var(--sys-brand-primary);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+  }
+
+  /* Info Card */
+  .info-card {
+    background: var(--sys-bg-tint-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border-left: 4px solid var(--sys-brand-primary);
+  }
+
+  .info-card h4 {
+    margin: 0 0 12px;
+    font-size: 1.2rem;
+    color: var(--sys-text-primary);
+  }
+
+  .info-card p {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  /* Score Badge List */
+  .score-list li {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    align-items: flex-start;
+  }
+
+  .score-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .score-badge.preferred {
+    background: var(--sys-semantic-success-bg);
+    color: var(--sys-semantic-success-text);
+  }
+  .score-badge.good {
+    background: var(--sys-semantic-info-bg);
+    color: var(--sys-semantic-info-text);
+  }
+  .score-badge.content {
+    background: var(--sys-semantic-warning-bg);
+    color: var(--sys-semantic-warning-text);
+  }
+
+  .viz-box {
+    background: var(--sys-bg-elevated);
+    border: 1px solid var(--sys-border-divider);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: var(--sys-effect-shadow-sm);
+  }
+
+  /* Code Block */
+  .code-block {
+    background: #1e1e1e;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 24px 0;
+  }
+
+  pre {
+    background: transparent;
+    color: #e0e0e0;
+    padding: 24px;
+    margin: 0;
+    overflow-x: auto;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+  }
+
+  .comment {
+    color: #6a9955;
+  }
+  .keyword {
+    color: #569cd6;
+  }
+
+  /* Table */
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  .logic-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 24px 0;
+    font-size: 0.95rem;
+    border: 1px solid var(--sys-border-divider);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .logic-table th {
+    text-align: left;
+    padding: 16px;
+    background: var(--sys-bg-tint-tertiary);
+    border-bottom: 1px solid var(--sys-border-divider);
+    color: var(--sys-text-primary);
+    font-weight: 600;
+  }
+
+  .logic-table td {
+    padding: 16px;
+    border-bottom: 1px solid var(--sys-border-divider);
+    color: var(--sys-text-secondary);
+    vertical-align: top;
+  }
+
+  .logic-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .token-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: monospace;
+    font-weight: 500;
+  }
+
+  .token-tag.light {
+    background: #f0f0f0;
+    color: #333;
+  }
+  .token-tag.dark {
+    background: #333;
+    color: #fff;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sys-brand-primary);
+    color: var(--sys-text-on-brand);
+    padding: 14px 32px;
+    border-radius: 99px;
+    text-decoration: none;
+    font-weight: 600;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--sys-effect-shadow-lg);
+  }
+</style>

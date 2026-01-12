@@ -1,0 +1,327 @@
+/* 基本文档布局 */
+:root {
+  --sidebar-width: 280px;
+  --transition-speed: 0.3s;
+}
+
+
+
+.app-container {
+  display: flex;
+  /* Navbar is 64px fixed */
+  height: calc(100vh - 64px);
+  overflow: hidden;
+}
+
+/* Sidebar logic */
+/* Sidebar logic */
+.sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--sys-bg-container);
+  border-right: 1px solid var(--sys-border-divider);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 10;
+  transition: background-color var(--transition-speed);
+}
+
+.search-box {
+  padding: 16px;
+  border-bottom: 1px solid var(--sys-border-divider);
+  background-color: var(--sys-bg-container);
+  position: sticky;
+  top: 0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 99px; /* Modern pill shape */
+  border: 1px solid var(--sys-border-default);
+  background-color: var(--sys-bg-elevated);
+  color: var(--sys-text-primary);
+  box-sizing: border-box;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  border-color: var(--sys-brand-primary);
+  background-color: var(--sys-bg-container);
+  box-shadow: 0 0 0 3px var(--sys-brand-primary-opacity-20);
+}
+
+.color-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.color-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin-bottom: 2px;
+  transition: all 0.2s;
+  color: var(--sys-text-primary);
+  border: 1px solid transparent;
+}
+
+.color-item:hover {
+  background-color: var(--sys-bg-elevated);
+}
+
+.color-item.active {
+  background-color: var(--sys-bg-tint-brand);
+  border-color: var(--sys-brand-primary-opacity-20);
+  color: var(--sys-brand-primary);
+}
+
+.color-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 主内容区: 文档风格 */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  background-color: var(--sys-bg-canvas);
+  position: relative;
+}
+
+.docs-hero {
+  background-color: var(--sys-bg-container);
+  padding: 40px 60px;
+  border-bottom: 1px solid var(--sys-border-divider);
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--sys-text-secondary);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.breadcrumb .separator {
+  margin: 0 8px;
+  opacity: 0.5;
+}
+
+.breadcrumb .current {
+  color: var(--sys-text-primary);
+  background: var(--sys-bg-tint-secondary);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.docs-hero h1 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+}
+
+.docs-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 60px;
+}
+
+.docs-section {
+  margin-bottom: 80px;
+}
+
+.docs-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--sys-border-divider);
+  color: var(--sys-text-primary);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Token 表格 */
+.token-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: var(--sys-bg-container);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--sys-border-divider);
+  color: var(--sys-text-primary);
+}
+
+.token-table th,
+.token-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--sys-border-divider);
+}
+
+.token-table th {
+  background-color: var(--sys-bg-elevated);
+  font-weight: 600;
+  color: var(--sys-text-primary);
+}
+
+.token-preview {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--sys-border-default);
+}
+
+.token-name {
+  font-family: monospace;
+  color: var(--sys-brand-primary);
+  font-weight: 500;
+}
+
+.token-value {
+  font-family: monospace;
+  color: var(--sys-text-secondary); /* Use outline color for muted text */
+}
+
+/* Accessibility 卡片 */
+.a11y-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.a11y-card {
+  background: var(--sys-bg-container);
+  border: 1px solid var(--sys-border-default);
+  padding: 24px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: var(--sys-text-primary);
+}
+
+.contrast-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 12px;
+  margin-top: 12px;
+  background-color: var(--sys-bg-elevated);
+}
+
+/* 组件演示区 */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background-color: var(--sys-bg-container);
+  border: 1px solid var(--sys-border-default);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.card h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: var(--sys-text-primary);
+  margin-bottom: 16px;
+}
+
+/* 按钮与标签 */
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* State Layer Implementation for Buttons */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.btn:hover::after {
+  opacity: var(--state-hover-opacity);
+}
+
+.btn:active::after {
+  opacity: var(--state-pressed-opacity);
+}
+
+.btn-primary:active {
+  background-color: var(--sys-action-primary-pressed);
+}
+
+.btn-primary {
+  background-color: var(--sys-brand-primary);
+  color: var(--sys-text-on-brand);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--sys-border-default);
+  color: var(--sys-brand-primary);
+}
+
+.status-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.tag-success {
+  background-color: var(--sys-success-bg);
+  color: var(--sys-success-text);
+}
+.tag-warning {
+  background-color: var(--sys-warning-bg);
+  color: var(--sys-warning-text);
+}
+.tag-error {
+  background-color: var(--sys-error-bg);
+  color: var(--sys-error-text);
+}
+
+.text-xs {
+  font-size: 12px;
+  color: var(--sys-text-secondary);
+}

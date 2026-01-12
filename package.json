@@ -1,0 +1,30 @@
+{
+  "name": "colors-monorepo",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @moonhou/colors-web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:e2e": "pnpm --filter @moonhou/colors-web test:e2e",
+    "test:e2e:ui": "pnpm --filter @moonhou/colors-web test:e2e:ui",
+    "test:e2e:update": "pnpm --filter @moonhou/colors-web test:e2e:update",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "changeset publish",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "typescript": "^5.0.0"
+  },
+  "lint-staged": {
+    "packages/core/**/*.{ts,tsx}": [
+      "pnpm --filter @moonhou/colors-core type-check"
+    ],
+    "apps/web/**/*.{ts,tsx,astro}": [
+      "pnpm --filter @moonhou/colors-web build"
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+---
+import { GlobalControls } from './GlobalControls';
+const links = [
+  { href: '/', label: '首页' },
+  { href: '/principles', label: '原理' },
+  { href: '/verifier', label: '验证器' },
+];
+
+const { pathname } = Astro.url;
+const isActive = (href: string) => {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+};
+---
+
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="/" class="logo">
+      <span class="logo-icon">🌈</span>
+      <span class="logo-text">Colors</span>
+    </a>
+
+    <div class="nav-right">
+      <div class="nav-links">
+        {
+          links.map(({ href, label }) => (
+            <a
+              href={href}
+              class:list={['nav-item', { active: isActive(href) }]}
+            >
+              {label}
+            </a>
+          ))
+        }
+      </div>
+      <div class="nav-controls">
+        <GlobalControls client:load />
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    z-index: 1000;
+
+    /* Glassmorphism */
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--sys-border-divider);
+
+    transition: all 0.3s ease;
+  }
+
+  /* Dark mode support via global vars or data-theme selector if needed, 
+     but assuming --sys variables handle it. 
+     Wait, we need to ensure background color adapts to dark mode.
+     Using rgba(255,255,255,0.7) is harcoded light. 
+     Let's use CSS variables but with alpha.
+  */
+
+  :global([data-theme='dark']) .navbar {
+    background: rgba(30, 30, 30, 0.7); /* Approximate dark transparent */
+    border-bottom: 1px solid var(--sys-border-divider);
+  }
+
+  .nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--sys-text-primary);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+  }
+
+  .nav-item {
+    padding: 8px 16px;
+    border-radius: 99px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--sys-text-secondary);
+    transition: all 0.2s;
+  }
+
+  .nav-item:hover {
+    color: var(--sys-text-primary);
+    background: var(--sys-bg-elevated);
+  }
+
+  .nav-item.active {
+    color: var(--sys-brand-primary);
+    background: var(--sys-bg-tint-brand);
+  }
+</style>

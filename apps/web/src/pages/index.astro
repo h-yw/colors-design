@@ -1,0 +1,313 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ThemePicker } from '../components/ThemePicker';
+import { ui, defaultLang } from '../i18n/ui';
+
+const lang = defaultLang;
+const t = ui[lang];
+---
+
+<Layout title="Colors - 科学的中国传统色设计系统" type="landing">
+  <div class="landing-page">
+    {/* Hero Section */}
+    <section class="hero">
+      <div class="hero-content">
+        <div class="badge">{t['hero.badge']}</div>
+        <h1 class="title">
+          {t['hero.title.l1']}<br />
+          <span class="gradient-text">{t['hero.title.highlight']}</span><br />
+          {t['hero.title.l2']}
+        </h1>
+
+        {/* INLINE THEME PICKER */}
+        <ThemePicker client:load />
+
+        <p class="subtitle">
+          {t['hero.subtitle.p1']}<br />
+          {t['hero.subtitle.p2']}
+        </p>
+        <div class="cta-group">
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a href="/verifier" class="btn-primary">
+              {t['cta.verify']}
+            </a>
+            <a
+              href="/principles"
+              class="btn-secondary"
+              style="text-decoration: none;"
+            >
+              {t['cta.principles']}
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        {/* ABSTRACT ART: Purely decorative, driven by theme vars */}
+        <div class="abstract-shape"></div>
+      </div>
+    </section>
+
+    {/* Features Grid */}
+    {/* ... (Features content unchanged) ... */}
+    <section class="features">
+      <div class="feature-card">
+        <div class="icon">🎨</div>
+        <h3>{t['feature.oklch.title']}</h3>
+        <p>
+          {t['feature.oklch.desc']}
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🧱</div>
+        <h3>{t['feature.arch.title']}</h3>
+        <p>
+            {t['feature.arch.desc']}
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌓</div>
+        <h3>{t['feature.contrast.title']}</h3>
+        <p>
+            {t['feature.contrast.desc']}
+        </p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🌈</div>
+        <h3>{t['feature.gamut.title']}</h3>
+        <p>
+            {t['feature.gamut.desc']}
+        </p>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  /* Use locally generated tokens */
+  .landing-page {
+    /* Map generated --lp-* vars to local scoped vars if needed, or just use them */
+    background: var(--sys-bg-canvas);
+    color: var(--sys-text-primary);
+    min-height: 100vh;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  }
+
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 80px 10%;
+    background: linear-gradient(
+      135deg,
+      var(--sys-bg-tint-brand) 0%,
+      var(--sys-bg-canvas) 100%
+    );
+    min-height: 80vh;
+  }
+
+  .hero-content {
+    max-width: 600px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: var(--sys-bg-tint-secondary);
+    color: var(--sys-text-primary);
+    border-radius: 99px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    border: 1px solid var(--sys-border-divider);
+  }
+
+  .title {
+    font-size: 64px;
+    line-height: 1.1;
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+
+  .gradient-text {
+    background: linear-gradient(
+      45deg,
+      var(--sys-brand-primary),
+      var(--sys-action-secondary)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle {
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--sys-text-secondary);
+    margin-bottom: 40px;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 16px;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    background: var(--sys-brand-primary);
+    color: var(--sys-text-on-brand);
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s;
+    border: none;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    background: var(--sys-brand-primary-hover);
+    box-shadow: 0 10px 20px -10px var(--sys-brand-primary);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    background: var(--sys-bg-container);
+    color: var(--sys-text-primary);
+    border: 1px solid var(--sys-border-default);
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background: var(--sys-bg-tint-brand);
+  }
+
+  .features {
+    padding: 80px 10%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 32px;
+    background: var(--sys-bg-container);
+  }
+
+  .feature-card {
+    padding: 32px;
+    background: var(--sys-bg-tint-secondary); /* Use tint for card bg */
+    border-radius: 16px;
+    border: 1px solid var(--sys-border-divider);
+    transition: transform 0.2s;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .feature-card .icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .feature-card h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--sys-text-primary);
+  }
+
+  .feature-card p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--sys-text-secondary);
+  }
+
+  /* Visual Stack */
+  .hero-visual {
+    position: relative;
+    width: 400px;
+    height: 400px;
+  }
+
+  .color-card-stack {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .card {
+    position: absolute;
+    width: 240px;
+    height: 320px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease;
+  }
+
+  .card-3 {
+    background: var(--sys-action-tertiary);
+    top: 80px;
+    right: 80px;
+    transform: rotate(-10deg);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sys-text-on-brand);
+    font-weight: 800;
+    font-size: 24px;
+  }
+
+  /* Abstract generative shape for visual interest */
+  .abstract-shape {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      var(--sys-brand-primary),
+      var(--sys-action-secondary)
+    );
+    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    animation: morph 8s ease-in-out infinite;
+    box-shadow:
+      inset 10px 10px 60px rgba(255, 255, 255, 0.2),
+      0 20px 40px var(--sys-brand-primary-alpha-20, rgba(0, 0, 0, 0.2));
+    opacity: 0.9;
+  }
+
+  @keyframes morph {
+    0%,
+    100% {
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+    }
+    34% {
+      border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+    }
+    67% {
+      border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      flex-direction: column;
+      padding: 40px 5%;
+      text-align: center;
+    }
+    .hero-visual {
+      display: none;
+    }
+    .cta-group {
+      justify-content: center;
+    }
+  }
+</style>
