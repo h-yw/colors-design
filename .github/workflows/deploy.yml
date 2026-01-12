@@ -21,9 +21,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v3
         with:
-          version: 9
+          version: 10
 
       - name: Use Node.js 20
         uses: actions/setup-node@v4
@@ -35,14 +35,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build Web App
-        run: pnpm --filter @moonhou/colors-web build
+        run: pnpm -r build
         env:
-          # Set these to match your GitHub repository settings
-          # SITE: https://<username>.github.io
-          # BASE: /<repo-name>
-          # Example:
-          # SITE: https://luckydog.github.io
-          # BASE: /colors-tools
           NODE_ENV: production
 
       - name: Upload Pages Artifact
