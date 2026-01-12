@@ -12,8 +12,7 @@ interface ColorItem {
 }
 
 export const useActivePalette = () => {
-  const { theme, hex, mode, gamut } = useThemeStore();
-
+  const { theme, hex, mode, gamut, customSecondary, customTertiary } = useThemeStore();
   const isDark = mode === 'dark';
   const isP3 = gamut === 'p3';
 
@@ -45,11 +44,16 @@ export const useActivePalette = () => {
     // but preserving logic from previous files which used it.
     return new TraditionalColorSystem(data, { targetGamut: isP3 ? 'p3' : 'srgb' });
   }, [activeColor, isP3]);
-
+  
   // 3. Generate Palette
   const palette = useMemo(() => {
-    return system.generatePalette(activeColor.name, isDark);
-  }, [system, activeColor.name, isDark]);
+    return system.generatePalette(
+        activeColor.name, 
+        isDark, 
+        isP3 ? 'p3' : 'srgb', // Explicitly pass gamut override to match hook state
+        { secondary: customSecondary, tertiary: customTertiary }
+    );
+  }, [system, activeColor.name, isDark, isP3, customSecondary, customTertiary]);
 
   return {
     activeColor,

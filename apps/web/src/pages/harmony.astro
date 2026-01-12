@@ -1,0 +1,50 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { HarmonyExplorer } from '../components/HarmonyExplorer';
+import { ui, defaultLang } from '../i18n/ui';
+
+const t = ui[defaultLang];
+---
+
+<Layout title={`${t['harmony.title']} - Colors`} type="default">
+  <div class="page-container">
+    <header class="page-header">
+      <h1>{t['harmony.title']}</h1>
+      <p>{t['harmony.desc']}</p>
+    </header>
+
+    <section class="explorer-section">
+      <HarmonyExplorer client:load />
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .page-header {
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    background: linear-gradient(
+      135deg,
+      var(--sys-brand-primary),
+      var(--sys-action-secondary)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-header p {
+    font-size: 1.25rem;
+    color: var(--sys-text-secondary);
+  }
+</style>

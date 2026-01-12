@@ -214,7 +214,7 @@ export class TraditionalColorSystem {
 
   // --- Core Logic ---
 
-  generatePalette(themeName: string, isDark: boolean = false, gamutOverride?: 'srgb' | 'p3'): GeneratedSystem {
+  generatePalette(themeName: string, isDark: boolean = false, gamutOverride?: 'srgb' | 'p3', overrides?: { secondary?: string, tertiary?: string }): GeneratedSystem {
     const theme = this.library.find(c => c.name === themeName) || this.library[0];
     const sourceOklch = theme.oklch!;
 
@@ -240,12 +240,24 @@ export class TraditionalColorSystem {
     // Green (Success) - OKLCH hue ~ 140
     const successPalette = this.generateTonalPalette('#386a20', gamutOverride); // Standard Green
 
-    // Secondary: Brand distinct Hue pivot (e.g. +60)
-    const secondarySource = { ...sourceOklch, h: ((sourceOklch.h || 0) + 60) % 360 };
+    // Secondary: Brand distinct Hue pivot (e.g. +60) OR Override
+    let secondarySource = { ...sourceOklch, h: ((sourceOklch.h || 0) + 60) % 360 };
+    if (overrides?.secondary) {
+        const osw = toOklch(overrides.secondary);
+        if (osw) {
+             secondarySource = { ...osw, h: osw.h ?? 0 };
+        }
+    }
     const secondaryPalette = this.generateTonalPalette(secondarySource, gamutOverride);
 
-    // Tertiary: Brand distinct Hue pivot (e.g. +120) or just Triadic
-    const tertiarySource = { ...sourceOklch, h: ((sourceOklch.h || 0) + 120) % 360 };
+    // Tertiary: Brand distinct Hue pivot (e.g. +120) OR Override
+    let tertiarySource = { ...sourceOklch, h: ((sourceOklch.h || 0) + 120) % 360 };
+    if (overrides?.tertiary) {
+        const otw = toOklch(overrides.tertiary);
+        if (otw) {
+            tertiarySource = { ...otw, h: otw.h ?? 0 };
+        }
+    }
     const tertiaryPalette = this.generateTonalPalette(tertiarySource, gamutOverride);
     
     // Fourth: Brand distinct Hue pivot (e.g. +180 Complementary)

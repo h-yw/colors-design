@@ -5,6 +5,8 @@ import { ui, defaultLang } from '../i18n/ui';
 
 const lang = defaultLang;
 const t = ui[lang];
+const base = import.meta.env.BASE_URL;
+const getPath = (p: string) => base + (p.startsWith('/') ? p.slice(1) : p);
 ---
 
 <Layout title="Colors - 科学的中国传统色设计系统" type="landing">
@@ -28,11 +30,11 @@ const t = ui[lang];
         </p>
         <div class="cta-group">
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <a href="/verifier" class="btn-primary">
+            <a href={getPath('/verifier')} class="btn-primary">
               {t['cta.verify']}
             </a>
             <a
-              href="/principles"
+              href={getPath('/principles')}
               class="btn-secondary"
               style="text-decoration: none;"
             >
@@ -61,21 +63,21 @@ const t = ui[lang];
         <div class="icon">🧱</div>
         <h3>{t['feature.arch.title']}</h3>
         <p>
-            {t['feature.arch.desc']}
+          {t['feature.arch.desc']}
         </p>
       </div>
       <div class="feature-card">
         <div class="icon">🌓</div>
         <h3>{t['feature.contrast.title']}</h3>
         <p>
-            {t['feature.contrast.desc']}
+          {t['feature.contrast.desc']}
         </p>
       </div>
       <div class="feature-card">
         <div class="icon">🌈</div>
         <h3>{t['feature.gamut.title']}</h3>
         <p>
-            {t['feature.gamut.desc']}
+          {t['feature.gamut.desc']}
         </p>
       </div>
     </section>

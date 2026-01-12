@@ -1,14 +1,38 @@
 ---
 import { GlobalControls } from './GlobalControls';
+import { ui, defaultLang } from '../i18n/ui';
+
+const t = ui[defaultLang];
+
+// Helper to handle base path (e.g. /colors-design/)
+const getPath = (path: string) => {
+  const base = import.meta.env.BASE_URL; // e.g. "/" or "/colors-design/"
+  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  if (base === '/' && cleanPath === '') return '/';
+  if (base !== '/' && cleanPath === '') return base; // Return base with trailing slash usually, or strip it? Astro usually handles /colors-design/ as home
+  // Actually simplest is: base + cleanPath
+  return base + cleanPath;
+};
+
 const links = [
-  { href: '/', label: '首页' },
-  { href: '/principles', label: '原理' },
-  { href: '/verifier', label: '验证器' },
+  { href: getPath('/'), label: '首页' },
+  {
+    href: getPath('/principles'),
+    label: t['cta.principles']?.replace('📚 ', '') || '原理',
+  },
+  { href: getPath('/verifier'), label: '验证器' },
+  {
+    href: getPath('/harmony'),
+    label: t['nav.harmony']?.replace('🎨 ', '') || '和声',
+  },
 ];
 
 const { pathname } = Astro.url;
 const isActive = (href: string) => {
-  if (href === '/') return pathname === '/';
+  // Exact match for home
+  if (href === getPath('/'))
+    return pathname === href || pathname === href.replace(/\/$/, '');
+  // For subpages, simple startsWith
   return pathname.startsWith(href);
 };
 ---
