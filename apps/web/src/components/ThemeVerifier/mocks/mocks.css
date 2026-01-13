@@ -554,3 +554,139 @@
     background: var(--sys-bg-tint-neutral);
     cursor: default;
 }
+
+
+/* --- Missing Dashboard Styles --- */
+
+.dash-logo {
+  width: 32px;
+  height: 32px;
+  background: var(--sys-brand-primary);
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.dash-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.dash-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.dash-card {
+  background: var(--sys-bg-container);
+  border: 1px solid var(--sys-border-divider);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.stat-card {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stat-card:hover {
+  border-color: var(--sys-brand-primary-opacity-20);
+  background: var(--sys-bg-elevated);
+}
+
+.stat-card.active {
+  border-color: var(--sys-brand-primary);
+  background: var(--sys-bg-tint-brand);
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--sys-text-secondary);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--sys-text-primary);
+  margin-bottom: 4px;
+}
+
+.stat-trend {
+  font-size: 12px;
+}
+
+.stat-trend.positive { color: var(--sys-semantic-success-text); }
+.stat-trend.negative { color: var(--sys-semantic-error-text); }
+.stat-trend.neutral { color: var(--sys-text-secondary); }
+
+.chart-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sys-text-primary);
+}
+
+.chart-actions {
+  display: flex;
+  gap: 4px;
+  background: var(--sys-bg-tint-neutral);
+  padding: 2px;
+  border-radius: 6px;
+}
+
+.pill {
+  padding: 2px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--sys-text-secondary);
+}
+
+.pill.active {
+  background: var(--sys-bg-container);
+  color: var(--sys-text-primary);
+  box-shadow: var(--sys-effect-shadow-sm);
+}
+
+.chart-body {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--sys-border-divider);
+}
+
+.chart-bar {
+  flex: 1;
+  background: var(--sys-brand-primary);
+  border-radius: 4px 4px 0 0;
+  opacity: 0.8;
+  transition: height 0.3s ease;
+}
+
+.chart-bar:hover {
+  opacity: 1;
+}

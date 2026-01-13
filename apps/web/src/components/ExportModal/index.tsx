@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import './style.css';
 import { TraditionalColorSystem } from '@moonhou/colors-core';
 import { formatCss } from 'culori';
 import { mapToFigma, HarmonyMapper } from '@moonhou/colors-core';
@@ -127,142 +128,51 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
   if (!isOpen) return null;
 
   return createPortal(
-    <div style={{
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-        background: 'rgba(0,0,0,0.5)', zIndex: 100,
-        display: 'flex', alignItems: 'center', justifyContent: 'center'
-      }} onClick={onClose}>
-        <div style={{
-          background: 'var(--sys-bg-container)',
-          color: 'var(--sys-text-primary)',
-          width: '700px', // Wider for more tabs
-          height: '500px',
-          borderRadius: '16px',
-          padding: '24px',
-          display: 'flex',
-          gap: '16px',
-          flexDirection: 'column'
-        }} onClick={e => e.stopPropagation()}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ margin: 0 }}>导出 Token</h2>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', color: 'inherit' }}>&times;</button>
+    <div className="export-modal-overlay" onClick={onClose}>
+        <div className="export-modal-content" onClick={e => e.stopPropagation()}>
+          <div className="export-modal-header">
+            <h2>导出 Token</h2>
+            <button onClick={onClose} className="export-modal-close-btn">&times;</button>
           </div>
 
-          <div style={{ 
-            display: 'flex', 
-            borderBottom: '1px solid var(--sys-border-divider)', 
-            alignItems: 'center', 
-            gap: '16px' 
-          }}>
-            <div style={{ 
-                display: 'flex', 
-                gap: '8px', 
-                flex: 1, 
-                overflowX: 'auto',
-                paddingBottom: '0px',
-                // Hide scrollbar but allow scroll
-                scrollbarWidth: 'none',
-                msOverflowStyle: 'none'
-            }}>
-              <style>{`
-                .tab-scroll::-webkit-scrollbar { display: none; }
-              `}</style>
-              <div className="tab-scroll" style={{ display: 'flex', gap: '8px' }}>
-              <button
-                style={{
-                  padding: '12px 16px',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: exportTab === 'css' ? '2px solid var(--sys-brand-primary)' : '2px solid transparent',
-                  fontWeight: exportTab === 'css' ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setExportTab('css')}
-              >CSS</button>
-              <button
-                style={{
-                  padding: '12px 16px',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: exportTab === 'json_light' ? '2px solid var(--sys-brand-primary)' : '2px solid transparent',
-                  fontWeight: exportTab === 'json_light' ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setExportTab('json_light')}
-              >JSON (浅色)</button>
-              <button
-                style={{
-                  padding: '12px 16px',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: exportTab === 'json_dark' ? '2px solid var(--sys-brand-primary)' : '2px solid transparent',
-                  fontWeight: exportTab === 'json_dark' ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setExportTab('json_dark')}
-              >JSON (深色)</button>
-              <button
-                style={{
-                  padding: '12px 16px',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: exportTab === 'figma' ? '2px solid var(--sys-brand-primary)' : '2px solid transparent',
-                  fontWeight: exportTab === 'figma' ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setExportTab('figma')}
-              >Figma</button>
-               <button
-                style={{
-                  padding: '12px 16px',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: exportTab === 'harmony_light' ? '2px solid var(--sys-brand-primary)' : '2px solid transparent',
-                  fontWeight: exportTab === 'harmony_light' ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setExportTab('harmony_light')}
-              >HarmonyOS (浅色)</button>
-               <button
-                style={{
-                  padding: '12px 16px',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: exportTab === 'harmony_dark' ? '2px solid var(--sys-brand-primary)' : '2px solid transparent',
-                  fontWeight: exportTab === 'harmony_dark' ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setExportTab('harmony_dark')}
-              >HarmonyOS (深色)</button>
+          <div className="export-modal-tabs-container">
+            <div className="export-modal-scroll-wrapper">
+              <div className="export-modal-tabs-list">
+                <button
+                  className={`export-modal-tab-btn ${exportTab === 'css' ? 'active' : ''}`}
+                  onClick={() => setExportTab('css')}
+                >CSS</button>
+                <button
+                  className={`export-modal-tab-btn ${exportTab === 'json_light' ? 'active' : ''}`}
+                  onClick={() => setExportTab('json_light')}
+                >JSON (浅色)</button>
+                <button
+                  className={`export-modal-tab-btn ${exportTab === 'json_dark' ? 'active' : ''}`}
+                  onClick={() => setExportTab('json_dark')}
+                >JSON (深色)</button>
+                <button
+                  className={`export-modal-tab-btn ${exportTab === 'figma' ? 'active' : ''}`}
+                  onClick={() => setExportTab('figma')}
+                >Figma</button>
+                 <button
+                  className={`export-modal-tab-btn ${exportTab === 'harmony_light' ? 'active' : ''}`}
+                  onClick={() => setExportTab('harmony_light')}
+                >HarmonyOS (浅色)</button>
+                 <button
+                  className={`export-modal-tab-btn ${exportTab === 'harmony_dark' ? 'active' : ''}`}
+                  onClick={() => setExportTab('harmony_dark')}
+                >HarmonyOS (深色)</button>
               </div>
             </div>
           </div>
 
           {exportTab === 'css' && (
-             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', padding: '8px 0' }}>
+             <div className="export-modal-prefix-row">
                <span>前缀:</span>
                <input
                  value={cssPrefix}
                  onChange={e => setCssPrefix(e.target.value)}
-                 style={{ width: '80px', padding: '6px', borderRadius: '4px', border: '1px solid var(--sys-border-default)' }}
+                 className="export-modal-prefix-input"
                  placeholder='sys'
                />
              </div>
@@ -271,28 +181,18 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => 
           <textarea
             value={exportContent}
             readOnly
-            style={{
-              flex: 1,
-              background: 'var(--sys-bg-elevated)',
-              color: 'var(--sys-text-secondary)',
-              border: 'none',
-              borderRadius: '8px',
-              padding: '16px',
-              fontFamily: 'monospace',
-              resize: 'none',
-              marginTop: exportTab === 'css' ? '0' : '16px'
-            }}
+            className={`export-modal-textarea ${exportTab !== 'css' ? 'no-margin' : ''}`}
           />
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid var(--sys-border-divider)' }}>
-             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', userSelect: 'none' }}>
+          <div className="export-modal-footer">
+             <label className="export-modal-p3-label">
                <input 
                  type="checkbox" 
                  checked={useP3} 
                  onChange={e => setUseP3(e.target.checked)} 
-                 style={{ width: '16px', height: '16px' }}
+                 className="export-modal-p3-checkbox"
                />
-               <span style={{ fontSize: '14px', fontWeight: 500 }}>启用 P3 广色域</span>
+               <span className="export-modal-p3-text">启用 P3 广色域</span>
              </label>
 
             <button className="btn btn-primary" onClick={() => navigator.clipboard.writeText(exportContent)}>

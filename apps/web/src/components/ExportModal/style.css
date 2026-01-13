@@ -1,0 +1,149 @@
+/* Modal Overlay */
+.export-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal Content */
+.export-modal-content {
+  background: var(--sys-bg-container);
+  color: var(--sys-text-primary);
+  width: 700px;
+  height: 500px;
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  gap: 16px;
+  flex-direction: column;
+}
+
+/* Header */
+.export-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.export-modal-header h2 {
+  margin: 0;
+}
+
+.export-modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Tabs */
+.export-modal-tabs-container {
+  display: flex;
+  border-bottom: 1px solid var(--sys-border-divider);
+  align-items: center;
+  gap: 16px;
+}
+
+.export-modal-scroll-wrapper {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  overflow-x: auto;
+  padding-bottom: 0px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.export-modal-scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.export-modal-tabs-list {
+  display: flex;
+  gap: 8px;
+}
+
+.export-modal-tab-btn {
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  white-space: nowrap;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  font-weight: normal;
+}
+
+.export-modal-tab-btn.active {
+  border-bottom: 2px solid var(--sys-brand-primary);
+  font-weight: bold;
+}
+
+/* Prefix Input */
+.export-modal-prefix-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 8px 0;
+}
+
+.export-modal-prefix-input {
+  width: 80px;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid var(--sys-border-default);
+}
+
+/* Textarea */
+.export-modal-textarea {
+  flex: 1;
+  background: var(--sys-bg-elevated);
+  color: var(--sys-text-secondary);
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: monospace;
+  resize: none;
+  margin-top: 16px;
+}
+
+.export-modal-textarea.no-margin {
+  margin-top: 0;
+}
+
+/* Footer */
+.export-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--sys-border-divider);
+}
+
+.export-modal-p3-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.export-modal-p3-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.export-modal-p3-text {
+  font-size: 14px;
+  font-weight: 500;
+}

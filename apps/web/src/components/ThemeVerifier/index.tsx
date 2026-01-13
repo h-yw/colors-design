@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import './index.css';
+import './style.css';
 import colorData from '../../lib/colors.json';
 import { PhoneMock } from './mocks/PhoneMock';
 import { BlogMock } from './mocks/BlogMock';
@@ -13,6 +12,7 @@ import { PrimitiveCharts } from '../PrimitiveCharts';
 import { TokenTable } from '../TokenTable';
 import { AccessibilityReport } from '../AccessibilityReport';
 import { ExportModal } from '../ExportModal';
+import { HarmonyDisplay } from './HarmonyDisplay';
 
 interface ColorItem {
     name: string;
@@ -122,10 +122,10 @@ export const ThemeVerifier: React.FC = () => {
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                    <h1 style={{ margin: 0, fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--sys-text-primary)' }}>
+                    <h1 className="docs-title">
                         {palette.meta.name} 设计变量
                     </h1>
-                     <p style={{ marginTop: '8px', fontSize: '1.1rem', color: 'var(--sys-text-secondary)', maxWidth: '600px' }}>
+                     <p className="docs-description">
                         {palette.meta.name} ({palette.meta.pinyin}) 色彩系统的唯一可信数据源。
                         基于 OKLCH 插值生成，完全符合 APCA 对比度标准。
                     </p>
@@ -136,17 +136,7 @@ export const ThemeVerifier: React.FC = () => {
                      <select 
                         value={simulationMode}
                         onChange={(e) => setSimulationMode(e.target.value as any)}
-                        style={{
-                            appearance: 'none',
-                            background: 'var(--sys-bg-container)',
-                            color: 'var(--sys-text-primary)',
-                            border: '1px solid var(--sys-border-default)',
-                            padding: '10px 16px',
-                            borderRadius: '8px',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            boxShadow: 'var(--sys-effect-shadow-sm)'
-                        }}
+                        className="simulation-select"
                      >
                         <option value="none">👁️ 正常视觉</option>
                         <option value="protanopia">🔴 红色盲 (Protanopia)</option>
@@ -154,19 +144,7 @@ export const ThemeVerifier: React.FC = () => {
                         <option value="tritanopia">🔵 蓝色盲 (Tritanopia)</option>
                      </select>
 
-                     <button className="btn" style={{ 
-                        background: 'var(--sys-bg-container)', 
-                        color: 'var(--sys-text-primary)', 
-                        border: '1px solid var(--sys-border-default)',
-                        padding: '10px 16px',
-                        borderRadius: '8px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        boxShadow: 'var(--sys-effect-shadow-sm)'
-                     }} onClick={() => setShowExport(true)}>
+                     <button className="docs-action-btn" onClick={() => setShowExport(true)}>
                         <span>📤</span> 导出配方
                      </button>
                 </div>
@@ -189,43 +167,7 @@ export const ThemeVerifier: React.FC = () => {
           {/* 3.5 Harmonies (New Feature) */}
           <section className="docs-section">
               <h2>色彩和声 🎨</h2>
-              {(() => {
-                  const harmonies = system.generateHarmonies(activeColor.name);
-                  const Swatch = ({ c, label }: { c: string, label: string }) => (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                          <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: c, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
-                          <span style={{ fontSize: '12px', color: 'var(--sys-text-secondary)' }}>{label}</span>
-                          <code style={{ fontSize: '10px', opacity: 0.5 }}>{c}</code>
-                      </div>
-                  );
-                  return (
-                      <div style={{ display: 'flex', gap: '40px', background: 'var(--sys-bg-elevated)', padding: '32px', borderRadius: '16px' }}>
-                          {/* Compl */}
-                          <div style={{ textAlign: 'center' }}>
-                              <h4 style={{ marginTop: 0, marginBottom: '16px', color: 'var(--sys-text-primary)' }}>互补色</h4>
-                              <Swatch c={harmonies.complementary} label="180°" />
-                          </div>
-                          
-                          {/* Analogous */}
-                          <div style={{ textAlign: 'center' }}>
-                              <h4 style={{ marginTop: 0, marginBottom: '16px', color: 'var(--sys-text-primary)' }}>邻近色</h4>
-                              <div style={{ display: 'flex', gap: '16px' }}>
-                                  <Swatch c={harmonies.analogous[0]} label="-30°" />
-                                  <Swatch c={harmonies.analogous[1]} label="+30°" />
-                              </div>
-                          </div>
-                          
-                          {/* Triadic */}
-                          <div style={{ textAlign: 'center' }}>
-                              <h4 style={{ marginTop: 0, marginBottom: '16px', color: 'var(--sys-text-primary)' }}>三元色</h4>
-                              <div style={{ display: 'flex', gap: '16px' }}>
-                                  <Swatch c={harmonies.triadic[0]} label="-120°" />
-                                  <Swatch c={harmonies.triadic[1]} label="+120°" />
-                              </div>
-                          </div>
-                      </div>
-                  );
-              })()}
+              <HarmonyDisplay system={system} activeColorName={activeColor.name} />
           </section>
 
           {/* 4. Realism Lab (Mockups) */}
@@ -236,11 +178,11 @@ export const ThemeVerifier: React.FC = () => {
                 {/* 1. Mobile OS (HarmonyOS Style) */}
                 <div className="lab-case">
                     <h3>1. 移动端 OS (HarmonyOS ArkUI)</h3>
-                    <p style={{ color: 'var(--sys-text-secondary)', marginBottom: '16px' }}>
+                    <p className="lab-case-desc">
                         验证 <code>bg.canvas</code> 与 <code>bg.surface</code> 的分层效果及其在大触控区域下的适配性。
                         展示系统在“分组列表”范式下的表现。
                     </p>
-                    <div style={{ display: 'flex', justifyContent: 'center', background: 'var(--sys-neutral-10)', padding: '40px', borderRadius: '16px' }}>
+                    <div className="lab-case-preview mobile">
                         <PhoneMock />
                     </div>
                 </div>
@@ -248,10 +190,10 @@ export const ThemeVerifier: React.FC = () => {
                 {/* 2. Editorial / Blog */}
                 <div className="lab-case">
                     <h3>2. 长文阅读 / 内容流</h3>
-                    <p style={{ color: 'var(--sys-text-secondary)', marginBottom: '16px' }}>
+                     <p className="lab-case-desc">
                         验证沉浸式阅读体验，测试 <code>text.primary</code> 层级和细微 <code>bg.tint</code> 的应用效果。
                     </p>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="lab-case-preview">
                         <BlogMock />
                     </div>
                 </div>
@@ -259,10 +201,10 @@ export const ThemeVerifier: React.FC = () => {
                 {/* 3. SaaS Dashboard */}
                 <div className="lab-case">
                     <h3>3. SaaS 后台仪表盘</h3>
-                    <p style={{ color: 'var(--sys-text-secondary)', marginBottom: '16px' }}>
+                     <p className="lab-case-desc">
                         信息密度压力测试。检查 <code>border.divider</code> 边界可见性和 <code>semantic.*</code> 状态色的区分度。
                     </p>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div className="lab-case-preview">
                         <DashboardMock />
                     </div>
                 </div>
@@ -277,9 +219,6 @@ export const ThemeVerifier: React.FC = () => {
       <ExportModal 
         isOpen={showExport} 
         onClose={() => setShowExport(false)} 
-        palette={palette as any} 
-        system={system} 
-        selectedName={activeColor.name} 
       />
     </div>
   );

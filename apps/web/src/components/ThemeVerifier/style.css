@@ -1,51 +1,49 @@
-/* 基本文档布局 */
+/* Layout */
 :root {
   --sidebar-width: 280px;
   --transition-speed: 0.3s;
 }
 
-
-
 .app-container {
   display: flex;
-  /* Navbar is 64px fixed */
-  height: calc(100vh - 64px);
+  height: 100vh;
+  padding-top: 64px;
   overflow: hidden;
+  box-sizing: border-box;
+  background: var(--sys-bg-canvas);
+  color: var(--sys-text-primary);
 }
 
-/* Sidebar logic */
-/* Sidebar logic */
+/* Sidebar */
 .sidebar {
-  width: var(--sidebar-width);
-  background-color: var(--sys-bg-container);
+  width: 280px;
+  background: var(--sys-bg-container);
   border-right: 1px solid var(--sys-border-divider);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   z-index: 10;
   transition: background-color var(--transition-speed);
+  /* Fixed positioning removed for Flexbox layout */
 }
 
 .search-box {
   padding: 16px;
   border-bottom: 1px solid var(--sys-border-divider);
-  background-color: var(--sys-bg-container);
-  position: sticky;
-  top: 0;
+  background-color: var(--sys-bg-container); /* Ensure bg covers scrolling content if sticky */
 }
 
 .search-input {
   width: 100%;
-  padding: 10px 14px;
-  border-radius: 99px; /* Modern pill shape */
+  padding: 8px 12px;
+  border-radius: 8px;
   border: 1px solid var(--sys-border-default);
-  background-color: var(--sys-bg-elevated);
+  background: var(--sys-bg-elevated);
   color: var(--sys-text-primary);
-  box-sizing: border-box;
-  outline: none;
-  font-family: inherit;
   font-size: 14px;
   transition: all 0.2s;
+  box-sizing: border-box;
+  outline: none;
 }
 
 .search-input:focus {
@@ -65,95 +63,198 @@
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
-  cursor: pointer;
   border-radius: 8px;
-  margin-bottom: 2px;
+  cursor: pointer;
   transition: all 0.2s;
-  color: var(--sys-text-primary);
+  color: var(--sys-text-secondary);
   border: 1px solid transparent;
 }
 
 .color-item:hover {
-  background-color: var(--sys-bg-elevated);
+  background: var(--sys-bg-elevated);
+  color: var(--sys-text-primary);
 }
 
 .color-item.active {
-  background-color: var(--sys-bg-tint-brand);
-  border-color: var(--sys-brand-primary-opacity-20);
+  background: var(--sys-bg-tint-brand);
   color: var(--sys-brand-primary);
+  border-color: var(--sys-brand-primary-opacity-20);
 }
 
 .color-swatch {
-  width: 20px;
-  height: 20px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0,0,0,0.1);
   flex-shrink: 0;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* 主内容区: 文档风格 */
+/* Main Content */
 .main-content {
   flex: 1;
-  overflow-y: auto;
-  padding: 0;
   background-color: var(--sys-bg-canvas);
+  overflow-y: auto;
+  overflow-x: auto;
   position: relative;
 }
 
+/* Hero Section */
 .docs-hero {
-  background-color: var(--sys-bg-container);
-  padding: 40px 60px;
-  border-bottom: 1px solid var(--sys-border-divider);
+  margin-bottom: 60px;
 }
 
-/* Breadcrumbs */
 .breadcrumb {
   display: flex;
   align-items: center;
-  font-size: 13px;
+  gap: 8px;
+  font-size: 14px;
   color: var(--sys-text-secondary);
   font-weight: 500;
-  margin-bottom: 8px;
 }
 
 .breadcrumb .separator {
-  margin: 0 8px;
   opacity: 0.5;
 }
 
 .breadcrumb .current {
   color: var(--sys-text-primary);
+  font-weight: 500;
   background: var(--sys-bg-tint-secondary);
   padding: 2px 8px;
   border-radius: 4px;
 }
 
-.docs-hero h1 {
+.docs-title {
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--sys-text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
 }
 
+.docs-description {
+  margin-top: 8px;
+  font-size: 1.1rem;
+  color: var(--sys-text-secondary);
+  max-width: 600px;
+}
+
+/* Controls */
+.simulation-select {
+  appearance: none;
+  background: var(--sys-bg-container);
+  color: var(--sys-text-primary);
+  border: 1px solid var(--sys-border-default);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--sys-effect-shadow-sm);
+}
+
+.docs-action-btn {
+  background: var(--sys-bg-container);
+  color: var(--sys-text-primary);
+  border: 1px solid var(--sys-border-default);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--sys-effect-shadow-sm);
+}
+
+/* Sections */
 .docs-wrapper {
   max-width: 1200px;
   margin: 0 auto;
   padding: 60px;
-}
-
-.docs-section {
-  margin-bottom: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
 }
 
 .docs-section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 32px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--sys-border-divider);
-  color: var(--sys-text-primary);
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+    font-size: 1.8rem;
+    margin-bottom: 32px;
+    border-bottom: 2px solid var(--sys-border-divider);
+    padding-bottom: 12px;
+    color: var(--sys-text-primary);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
+
+/* Harmony Section */
+.harmony-container {
+  display: flex;
+  gap: 40px;
+  background: var(--sys-bg-elevated);
+  padding: 32px;
+  border-radius: 16px;
+}
+
+.harmony-group {
+    text-align: center;
+}
+
+.harmony-group-title {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: var(--sys-text-primary);
+}
+
+.harmony-swatch-wrapper {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 8px;
+}
+
+.harmony-swatch-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.harmony-swatch-label {
+    font-size: 12px; 
+    color: var(--sys-text-secondary);
+}
+
+.harmony-swatch-code {
+    font-size: 10px; 
+    opacity: 0.5;
+}
+
+/* Lab Cases */
+.lab-case h3 {
+    margin-top: 0;
+}
+
+.lab-case-desc {
+    color: var(--sys-text-secondary);
+    margin-bottom: 16px;
+}
+
+.lab-case-preview {
+    display: flex;
+    justify-content: center;
+}
+
+.lab-case-preview.mobile {
+    background: var(--sys-neutral-10);
+    padding: 40px;
+    border-radius: 16px;
+}
+
+/* --- Missing Styles Merged from index.css --- */
 
 /* Token 表格 */
 .token-table {
@@ -260,6 +361,9 @@
   font-size: 14px;
   position: relative;
   overflow: hidden;
+  /* Defaults */
+  background: var(--sys-bg-container);
+  color: var(--sys-text-primary);
 }
 
 /* State Layer Implementation for Buttons */
@@ -324,4 +428,69 @@
 .text-xs {
   font-size: 12px;
   color: var(--sys-text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .app-container {
+    flex-direction: column;
+    /* Adjust padding top if navbar is fixed */
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 160px;
+    border-right: none;
+    border-bottom: 1px solid var(--sys-border-divider);
+    flex-shrink: 0;
+  }
+
+  .color-list {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px 16px;
+  }
+  
+  .color-item {
+    flex-shrink: 0;
+    width: 140px;
+    border: 1px solid var(--sys-border-default);
+  }
+
+  .search-box {
+      padding: 12px 16px;
+  }
+
+  .docs-wrapper {
+    padding: 24px;
+    gap: 40px;
+  }
+
+  .docs-title {
+    font-size: 1.8rem;
+  }
+
+  .harmony-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+  
+  .harmony-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .docs-hero {
+      margin-bottom: 32px;
+  }
+  
+  /* Stack header controls on mobile */
+  .docs-hero > div > div:last-child {
+      flex-wrap: wrap;
+  }
 }

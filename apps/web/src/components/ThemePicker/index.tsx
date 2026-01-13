@@ -1,5 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
+import './style.css';
 import colorData from '../../lib/colors.json';
 import { useThemeStore } from '../../store/useThemeStore';
 import { ExportModal } from '../ExportModal';
@@ -69,27 +70,17 @@ export const ThemePicker: React.FC = () => {
   if (featuredColors.length === 0) return null;
 
   return (
-    <div className="theme-picker-inline" style={{ marginTop: '24px', marginBottom: '32px' }}>
+    <div className="theme-picker-inline">
 
       {/* Label + Mode Toggle */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '12px',
-        marginBottom: '12px',
-        fontSize: '14px',
-        color: 'var(--sys-text-secondary)',
-        fontWeight: 500
-      }}>
-        <span>当前主题: <strong style={{ color: 'var(--sys-text-primary)' }}>{selectedColor.name} {selectedColor.isCustom ? `(${selectedColor.hex})` : ''}</strong></span>
+      <div className="theme-picker-header">
+        <span>当前主题: <strong className="theme-picker-current-value">{selectedColor.name} {selectedColor.isCustom ? `(${selectedColor.hex})` : ''}</strong></span>
 
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px' }}>
+        <div className="theme-picker-controls">
             {/* Custom Hex Trigger */}
             <button 
                 onClick={() => setShowInput(!showInput)}
-                style={{
-                    background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', opacity: 0.7
-                }}
+                className="theme-picker-custom-btn"
                 title="Input Custom Hex"
             >
                 🎨
@@ -98,19 +89,7 @@ export const ThemePicker: React.FC = () => {
             {/* Export Button */}
             <button
             onClick={() => setShowExport(true)}
-            style={{
-                background: 'var(--sys-bg-elevated)',
-                border: '1px solid var(--sys-border-default)',
-                borderRadius: '99px',
-                padding: '2px 8px',
-                fontSize: '12px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px',
-                color: 'var(--sys-text-primary)',
-                transition: 'all 0.2s',
-            }}
+            className="theme-picker-export-btn"
             >
             📤 Export
             </button>
@@ -119,47 +98,25 @@ export const ThemePicker: React.FC = () => {
       
       {/* Custom Input Popover */}
       {showInput && (
-          <form onSubmit={handleHexSubmit} style={{ marginBottom: '12px', display: 'flex', gap: '8px' }}>
+          <form onSubmit={handleHexSubmit} className="theme-picker-custom-form">
               <input 
                 autoFocus
                 type="text" 
                 placeholder="#RRGGBB"
                 value={customHexInput}
                 onChange={e => setCustomHexInput(e.target.value)}
-                style={{
-                    background: 'var(--sys-bg-elevated)',
-                    border: '1px solid var(--sys-border-default)',
-                    color: 'var(--sys-text-primary)',
-                    padding: '4px 8px',
-                    borderRadius: '6px',
-                    fontSize: '14px',
-                    width: '100px'
-                }}
+                className="theme-picker-custom-input"
               />
               <button 
                 type="submit"
-                style={{
-                    background: 'var(--sys-brand-primary)',
-                    color: 'var(--sys-text-on-brand)',
-                    border: 'none',
-                    borderRadius: '6px',
-                    padding: '4px 8px',
-                    cursor: 'pointer',
-                    fontSize: '12px'
-                }}
+                className="theme-picker-apply-btn"
             >Apply</button>
           </form>
       )}
 
       {/* Inline Swatches (Horizon Dock) */}
       <div 
-        style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-            height: '64px',
-            gap: '12px',
-            padding: '0 12px'
-        }}
+        className="theme-picker-dock"
         onMouseLeave={() => setActiveIndex(null)}
       >
         {featuredColors.map((c, index) => {
@@ -183,22 +140,10 @@ export const ThemePicker: React.FC = () => {
               onClick={() => setTheme(c.name)}
               onMouseEnter={() => setActiveIndex(index)}
               title={c.name}
+              className={`theme-picker-swatch ${isSelected ? 'active' : 'inactive'}`}
               style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
                 background: c.hex,
-                border: isSelected
-                  ? '3px solid var(--sys-bg-canvas)'
-                  : '2px solid transparent',
-                boxShadow: isSelected
-                  ? '0 0 0 2px var(--sys-text-primary), 0 4px 12px rgba(0,0,0,0.1)'
-                  : '0 2px 4px rgba(0,0,0,0.1)',
-                cursor: 'pointer',
-                transition: 'all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28)', 
                 transform: `scale(${scale}) translateY(${scale > 1 ? -10 : 0}px)`, 
-                padding: 0,
-                position: 'relative',
                 zIndex: scale > 1 ? 10 : 1
               }}
             >
@@ -211,9 +156,6 @@ export const ThemePicker: React.FC = () => {
         <ExportModal 
             isOpen={showExport} 
             onClose={() => setShowExport(false)} 
-            palette={palette as any} 
-            system={system} 
-            selectedName={selectedColor.name} 
         />
     </div>
   );

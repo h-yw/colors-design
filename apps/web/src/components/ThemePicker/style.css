@@ -1,0 +1,105 @@
+/* Container */
+.theme-picker-inline {
+  margin-top: 24px;
+  margin-bottom: 32px;
+}
+
+/* Header */
+.theme-picker-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: var(--sys-text-secondary);
+  font-weight: 500;
+}
+
+.theme-picker-current-value {
+  color: var(--sys-text-primary);
+}
+
+.theme-picker-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+/* Buttons */
+.theme-picker-custom-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.theme-picker-export-btn {
+  background: var(--sys-bg-elevated);
+  border: 1px solid var(--sys-border-default);
+  border-radius: 99px;
+  padding: 2px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--sys-text-primary);
+  transition: all 0.2s;
+}
+
+/* Custom Input Form */
+.theme-picker-custom-form {
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.theme-picker-custom-input {
+  background: var(--sys-bg-elevated);
+  border: 1px solid var(--sys-border-default);
+  color: var(--sys-text-primary);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100px;
+}
+
+.theme-picker-apply-btn {
+  background: var(--sys-brand-primary);
+  color: var(--sys-text-on-brand);
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/* Swatches Dock */
+.theme-picker-dock {
+  display: flex;
+  align-items: flex-end;
+  height: 64px;
+  gap: 12px;
+  padding: 0 12px;
+}
+
+.theme-picker-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  padding: 0;
+  position: relative;
+}
+
+.theme-picker-swatch.active {
+  box-shadow: 0 0 0 2px var(--sys-text-primary), 0 4px 12px rgba(0,0,0,0.1);
+  border: 3px solid var(--sys-bg-canvas);
+}
+
+.theme-picker-swatch.inactive {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border: 2px solid transparent;
+}
