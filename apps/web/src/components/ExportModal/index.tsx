@@ -1,22 +1,21 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import type { TraditionalColorSystem } from '@moonhou/colors-core';
+import { createPortal } from 'react-dom';
+import { TraditionalColorSystem } from '@moonhou/colors-core';
 import { formatCss } from 'culori';
 import { mapToFigma, HarmonyMapper } from '@moonhou/colors-core';
+import { useActivePalette } from '../../hooks/useActivePalette';
 
 interface ExportModalProps {
     isOpen: boolean;
     onClose: () => void;
-    palette: {
-        tokens: { [key: string]: string };
-        state: { [key: string]: string };
-        primitives: { [key: string]: { [level: string]: string } };
-    };
-    system: TraditionalColorSystem;
-    selectedName: string;
+    // Removed props as we now use hook
 }
 
-export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, palette, system, selectedName }) => {
-  const [exportTab, setExportTab] = useState<'css' | 'json_light' | 'json_dark' | 'figma' | 'tailwind' | 'harmony_light' | 'harmony_dark'>('css');
+export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose }) => {
+  const { palette, system, activeColor, isDark } = useActivePalette();
+  const selectedName = activeColor.name; // Logic from hook
+  
+  const [exportTab, setExportTab] = useState<'css' | 'json_light' | 'json_dark' | 'figma' | 'harmony_light' | 'harmony_dark'>('css');
   const [cssPrefix, setCssPrefix] = useState<string>('sys');
   const [useP3, setUseP3] = useState(false);
   const [harmonyKeys, setHarmonyKeys] = useState<string[]>([]);
@@ -122,27 +121,12 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, palet
         return JSON.stringify(output, null, 2);
     } 
     
-    if (exportTab === 'tailwind') {
-      const tokens = palette.tokens; // Uses currently generated palette (active mode), but usually we want dynamic config
-      // Tailwind config usually needs both light/dark strategies. 
-      // A common simple mapped config:
-      
-      return `// tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: ${JSON.stringify(tokens, null, 2)}
-    }
-  }
-}`;
-    }
-
     return '';
-  }, [exportTab, selectedName, system, palette, cssPrefix, harmonyKeys, useP3]);
+  }, [exportTab, selectedName, system, palette, cssPrefix, harmonyKeys, useP3, isDark]);
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div style={{
         position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
         background: 'rgba(0,0,0,0.5)', zIndex: 100,
@@ -268,20 +252,6 @@ module.exports = {
                 }}
                 onClick={() => setExportTab('harmony_dark')}
               >HarmonyOS (深色)</button>
-               <button
-                style={{
-                  padding: '12px 16px',
-                  background: 'none',
-                  border: 'none',
-                  borderBottom: exportTab === 'tailwind' ? '2px solid var(--sys-brand-primary)' : '2px solid transparent',
-                  fontWeight: exportTab === 'tailwind' ? 'bold' : 'normal',
-                  cursor: 'pointer',
-                  color: 'inherit',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s'
-                }}
-                onClick={() => setExportTab('tailwind')}
-              >Tailwind</button>
               </div>
             </div>
           </div>
@@ -330,6 +300,7 @@ module.exports = {
             </button>
           </div>
         </div>
-      </div>
+      </div>,
+    document.body
   );
 };
