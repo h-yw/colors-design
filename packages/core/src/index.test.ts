@@ -36,18 +36,18 @@ describe('TraditionalColorSystem', () => {
         expect(palette.tokens).toHaveProperty('bg.canvas');
     });
 
-    // OKLCH / Contrast Check
-    it('should ensure text contrast meets AA guidelines for generated tokens', () => {
+    // OKLCH / Contrast Check (Updated to APCA)
+    it('should ensure text contrast meets APCA guidelines for generated tokens', () => {
         const system = new Core.TraditionalColorSystem(colorData as any);
         const palette = system.generatePalette('朱红', false);
 
         const bg = palette.tokens['brand.primary'] || '#000000';
         const text = palette.tokens['text.on-brand'] || '#ffffff';
 
-        const contrast = system.getContrast(text, bg);
-        // We aim for AA (4.5) for generic text, but brand might be large text (3.0) or graphical. 
-        // Our system enforces 4.5 usually.
-        expect(contrast).toBeGreaterThanOrEqual(3.0);  
+        const apcaScore = Math.abs(Core.calcAPCA(text, bg));
+        // Lc 45 is minimum for large text, 60 for content. 
+        // Brand text is usually prominent, so we expect at least 45, likely much higher for B/W.
+        expect(apcaScore).toBeGreaterThanOrEqual(45);  
     });
 
     // Dark Mode Check

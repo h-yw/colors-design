@@ -1,6 +1,10 @@
 import type { SystemTokens } from './colors-system';
 import { formatHex, parse, formatCss } from 'culori';
 
+import mappingData from './data/harmony-mapping.json';
+
+const mapping = mappingData as Record<string, string>;
+
 /**
  * Domain-Driven Semantic Mapper for HarmonyOS
  * Maps ~1000 system resource keys to our 3-Layer Design Tokens.
@@ -70,6 +74,12 @@ export class HarmonyMapper {
   private resolveSemanticColor(key: string, tokens: SystemTokens): string {
     const t = (k: string) => this.safelyGetToken(tokens, k);
 
+    // 0. Check Configuration Mapping (Exact Match)
+    if (mapping[key]) {
+        return t(mapping[key]);
+    }
+
+    // Fallback: Preserving original heuristic logic for unmapped keys
     // --- Priority 1: Direct System Colors ---
     if (key.includes('color_primary')) return t('brand.primary');
     if (key.includes('color_secondary')) return t('action.secondary'); // Use Action for secondary to avoid huge hue shifts
@@ -151,13 +161,25 @@ export class HarmonyMapper {
   private applyAlpha(colorStr: string, alpha: number): string {
     const c = parse(colorStr);
     if (!c) return colorStr;
-    c.alpha = alpha;
     
     // Check if it's P3
     if (colorStr.startsWith('color(display-p3')) {
+        c.alpha = alpha;
         return formatCss(c);
     }
     
+    // Force Hex Alpha (RRGGBBAA)
+    const toHex = (n: number) => {
+        const hex = Math.round(n * 255).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    };
+
+    if (c.mode === 'rgb') {
+        return `#${toHex(c.r)}${toHex(c.g)}${toHex(c.b)}${toHex(alpha)}`;
+    }
+
+    // Fallback for other modes -> convert to rgb first
+    c.alpha = alpha;
     return formatHex(c);
   }
 }

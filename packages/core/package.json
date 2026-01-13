@@ -15,7 +15,8 @@
   "scripts": {
     "build": "vite build",
     "test": "vitest run",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "gen:mapping": "tsx src/scripts/gen-mapping.ts"
   },
   "dependencies": {
     "apca-w3": "^0.1.9",
