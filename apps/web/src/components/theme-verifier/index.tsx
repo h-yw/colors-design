@@ -30,6 +30,7 @@ export const ThemeVerifier: React.FC = () => {
 
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [showExport, setShowExport] = useState<boolean>(false);
+  const [simulationMode, setSimulationMode] = useState<'none' | 'protanopia' | 'deuteranopia' | 'tritanopia'>('none');
 
   // Search Logic
   const handleSearchChange = (val: string) => {
@@ -58,6 +59,21 @@ export const ThemeVerifier: React.FC = () => {
 
   return (
     <div className="app-container">
+      {/* SVG Filters for Color Blindness */}
+      <svg style={{ height: 0, width: 0, position: 'absolute', pointerEvents: 'none' }}>
+        <defs>
+          <filter id="protanopia">
+            <feColorMatrix type="matrix" values="0.567 0.433 0 0 0  0.558 0.442 0 0 0  0 0.242 0.758 0 0  0 0 0 1 0" />
+          </filter>
+          <filter id="deuteranopia">
+            <feColorMatrix type="matrix" values="0.625 0.375 0 0 0  0.7 0.3 0 0 0  0 0.3 0.7 0 0  0 0 0 1 0" />
+          </filter>
+          <filter id="tritanopia">
+             <feColorMatrix type="matrix" values="0.95 0.05 0 0 0  0 0.433 0.567 0 0  0 0.475 0.525 0 0  0 0 0 1 0" />
+          </filter>
+        </defs>
+      </svg>
+
       {/* 侧边栏 */}
       <aside className="sidebar">
         <div className="search-box">
@@ -88,7 +104,10 @@ export const ThemeVerifier: React.FC = () => {
       </aside>
 
       {/* 主验证区：设计系统文档模式 */}
-      <main className="main-content">
+      <main className="main-content" style={{ 
+          filter: simulationMode !== 'none' ? `url(#${simulationMode})` : 'none',
+          transition: 'filter 0.3s'
+      }}>
 
         {/* 1. Hero Section */}
         <div className="docs-hero">
@@ -112,7 +131,29 @@ export const ThemeVerifier: React.FC = () => {
                     </p>
                 </div>
                 
-                <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                     {/* Color Blindness Selector */}
+                     <select 
+                        value={simulationMode}
+                        onChange={(e) => setSimulationMode(e.target.value as any)}
+                        style={{
+                            appearance: 'none',
+                            background: 'var(--sys-bg-container)',
+                            color: 'var(--sys-text-primary)',
+                            border: '1px solid var(--sys-border-default)',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            boxShadow: 'var(--sys-effect-shadow-sm)'
+                        }}
+                     >
+                        <option value="none">👁️ 正常视觉</option>
+                        <option value="protanopia">🔴 红色盲 (Protanopia)</option>
+                        <option value="deuteranopia">🟢 绿色盲 (Deuteranopia)</option>
+                        <option value="tritanopia">🔵 蓝色盲 (Tritanopia)</option>
+                     </select>
+
                      <button className="btn" style={{ 
                         background: 'var(--sys-bg-container)', 
                         color: 'var(--sys-text-primary)', 
